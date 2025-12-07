@@ -64,11 +64,18 @@ const RightSidebar = () => {
       </div>
 
       {isOpen && (
-        <div className="flex-1 p-4 text-sm text-[white]">
-          <h2 className="font-lexend mb-2">Reference List</h2>
-          <p className="text-xs opacity-80">
-            Placeholder for references. We&apos;ll fill this in later.
+        <div className="flex-1 p-4 text-sm mt-[120px] ml-[-55px] mr-[20px] text-[#00bfde] italic">
+          <h2 className="font-lexend mb-2"></h2>
+          <p className="text-xs opacity-40">
+            Run from what's profitable and comfortable.
           </p>
+          <p className="opacity-50">Forget safety.</p>
+          <p className="opacity-60">Live where you fear to live.</p>  
+          <p className="opacity-70">Destroy your reputation.</p>
+          <p className="opacity-80">Be notorious.</p>
+          <p className="opacity-90">I have tried prudent planning long enough.</p>
+          <p>From now on, I'll be mad.</p>
+          <p className="opacity-30 text-right pt-[20px]">- Jalal al-Din Mohammed al-Balkhi</p>
         </div>
       )}
     </aside>

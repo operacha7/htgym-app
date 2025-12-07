@@ -14,6 +14,7 @@ const Header = () => {
   <h1
     className="
       font-commissioner
+      font-light
       text-[32px]
       tracking-[0.7em]
       uppercase
