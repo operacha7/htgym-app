@@ -1,16 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
-const RightSidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const RightSidebar = ({ isOpen, onClose }) => {
   const containerRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
         containerRef.current &&
-        !containerRef.current.contains(event.target)
+        !containerRef.current.contains(event.target) &&
+        !event.target.closest('.what-if-button') // Don't close when clicking the What-If button
       ) {
-        setIsOpen(false);
+        onClose();
       }
     };
 
@@ -23,7 +23,7 @@ const RightSidebar = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   return (
     <aside
@@ -37,31 +37,36 @@ const RightSidebar = () => {
         ${isOpen ? 'w-[320px]' : 'w-[60px]'}
       `}
     >
+      
+  
       <div className="w-[80px] flex flex-col mt-[15px]">
+            {/*}
         <button
-  type="button"
-  onClick={() => setIsOpen((v) => !v)}
-  className="
-    ml-auto
-    w-[40px]
-    h-[40px]
-    bg-[#ECE8E8]
-    shadow-button-ht
-    rounded-tl-[8px]
-    rounded-bl-[8px]
-    flex
-    items-center
-    justify-center
-    hover:scale-[1.1]
-    hover:shadow-lg
-    active:scale-[0.98]
-  "
->
-  <span className="text-black text-[25px]">
-    {isOpen ? '»»' : '««'}
-  </span>
-</button>
+          type="button"
+          onClick={onClose}
+          className="
+            ml-auto
+            w-[40px]
+            h-[40px]
+            bg-[#ECE8E8]
+            shadow-button-ht
+            rounded-tl-[8px]
+            rounded-bl-[8px]
+            flex
+            items-center
+            justify-center
+            hover:scale-[1.1]
+            hover:shadow-lg
+            active:scale-[0.98]
+          "
+        >
+          <span className="text-black text-[25px]">
+            {isOpen ? '»»' : '««'}
+          </span>
+        </button>
+              */}
       </div>
+
 
       {isOpen && (
         <div className="flex-1 p-4 text-sm mt-[120px] ml-[-55px] mr-[20px] text-[#00bfde] italic">

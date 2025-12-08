@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 // Change this passcode anytime you want
-const PASSCODE = "123456";
+const PASSCODE = "585521";
 
 // Session storage key
 const AUTH_KEY = "htgym_authenticated";

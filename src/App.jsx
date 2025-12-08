@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Header from "./Header";
 import NavBar from "./NavBar";
 import RightSidebar from "./RightSidebar";
-import Metholdology from "./Methodology.jsx";
+import Introduction from "./Introduction.jsx";
 import Criteria from "./Criteria";
 import VendorBrandOverview from "./VendorBrandOverview";
 import VendorBrandMatrix from "./VendorBrandMatrix.jsx";
@@ -20,14 +20,25 @@ const HEADER_OFFSET = HEADER_TOP + HEADER_HEIGHT + HEADER_GAP;
 
 function App() {
   // Track which section is active in the center content area
-  const [activeSection, setActiveSection] = useState("Scenarios");
+  const [activeSection, setActiveSection] = useState("Introduction");
+  
+  // Track sidebar open/close state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const handleToggleSidebar = () => {
+    setIsSidebarOpen((prev) => !prev);
+  };
+
+  const handleCloseSidebar = () => {
+    setIsSidebarOpen(false);
+  };
 
   const renderCenterContent = () => {
     switch (activeSection) {
         case "Scenarios":
           return <Scenarios />;
-        case "Methodology":
-          return <Metholdology />;
+        case "Introduction":
+          return <Introduction />;
       case "Criteria":
         return <Criteria />;
       case "Vendor & Brand Overview":
@@ -56,20 +67,14 @@ function App() {
         <Header />
 
         {/* LEFT NAV COLUMN */}
-        <aside className="w-[400px] bg-[#4C5270] flex flex-col justify-between">
+        <aside className="w-[400px] bg-[#4C5270] flex flex-col">
           {/* Push buttons down so they sit clearly below header */}
           <div className="flex justify-center mt-[140px]">
             <NavBar
               activeSection={activeSection}
               onChangeSection={setActiveSection}
+              onToggleSidebar={handleToggleSidebar}
             />
-          </div>
-
-          {/* Copyright at bottom */}
-          <div className="flex justify-center mb-4">
-            <p className="font-lexend text-[10px] sm:text-xs text-[#FFC06C]">
-              © 2026 Peracha. All Rights Reserved
-            </p>
           </div>
         </aside>
 
@@ -86,7 +91,10 @@ function App() {
             </main>
 
             {/* Collapsible reference sidebar whose top aligns with header bottom */}
-            <RightSidebar />
+            <RightSidebar 
+              isOpen={isSidebarOpen} 
+              onClose={handleCloseSidebar} 
+            />
           </div>
         </section>
       </div>

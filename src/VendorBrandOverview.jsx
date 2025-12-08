@@ -43,8 +43,7 @@ export default function VendorBrandOverview() {
               </p>
               <p>
                 Advanced Exercise submitted a quote for Life Fitness equipment. Although the company 
-                has Sales/Design Consultants in Houston, it does not operate a local showroom. Life 
-                Fitness products can, however, be viewed at Top Fitness in West University.
+                has Sales/Design Consultants in Houston, it does not operate a local showroom.
               </p>
             </div>
           </div>
@@ -68,7 +67,10 @@ export default function VendorBrandOverview() {
                 In 2019, Life Fitness was acquired by KPS Capital Partners, a private equity firm. 
                 Since the acquisition, some customer reviews on the consumer/retail side have indicated 
                 slower response times for warranty and service issues. Notably, these concerns have not 
-                appeared at the same scale on the commercial side of the business, which remains strong.
+                appeared at the same scale on the commercial side of the business, which remains strong.  
+                It should be noted that, generally, residential gym equipment generates much more complaints 
+                than commercial ones.
+
               </p>
             </div>
           </div>
@@ -91,7 +93,7 @@ export default function VendorBrandOverview() {
               <p>
                 Marathon has a strong B2B reputation with large commercial clients such as Shell, 
                 Conoco, Dell, Apple, and several major multi-unit housing providers. They have a 
-                showroom in Stafford where equipment can be tested.
+                showroom in Stafford where equipment can be viewed and tested.
               </p>
             </div>
           </div>
@@ -115,7 +117,8 @@ export default function VendorBrandOverview() {
               <p>
                 Precor does not manufacture a rower. Marathon Fitness quoted a Xebex rower, which 
                 is produced by a China-based company specializing in air rowers and air bikes. 
-                Xebex's estimated annual revenue ranges from $1 million to $2.5 million.
+                Xebex is recognized as a value brand.  Its estimated annual revenue ranges from $1 million 
+                to $2.5 million.
               </p>
             </div>
           </div>
@@ -136,9 +139,9 @@ export default function VendorBrandOverview() {
                 Risher is an authorized dealer for Matrix Fitness and over 20 other brands.
               </p>
               <p>
-                Neither Risher nor Matrix appear to operate a Houston showroom. Risher's listed business 
-                address resolves to a location that resembles an apartment/townhome complex, suggesting 
-                a smaller operation with limited physical retail presence.
+                NRisher and Matrix do not seem to have a showroom in Houston. Risher's official business 
+                address points to a location that looks like an apartment or townhome complex, which suggests 
+                the company is a smaller operation with a limited physical retail presence.
               </p>
             </div>
           </div>
@@ -155,9 +158,8 @@ export default function VendorBrandOverview() {
             <div className={`${COL2_WIDTH} text-[18px] leading-[1.8] text-slate-700 font-lexend text-left`}>
               <p className="mb-4">
                 Matrix is owned by Johnson Health Tech, a global fitness company headquartered in Taiwan. 
-                U.S. operations are centered in Wisconsin, where the top-of-the-line Magnum series is 
-                produced. Other Matrix equipment—including the lines under consideration—is manufactured 
-                in Asia.
+                U.S. operations are centered in Wisconsin.  The Matrix equipment being considered is 
+                manufactured in Asia.
               </p>
               <p className="mb-4">
                 Johnson Health Tech has estimated revenue of $1.66 billion, with Matrix generating 
@@ -237,7 +239,7 @@ export default function VendorBrandOverview() {
               </p>
               <p>
                 Revenue estimates vary by source: Buzzfile estimates $43.4 million, while broader industry 
-                estimates suggest $50–100 million. TRUE also expanded in 2020 by acquiring Octane Fitness, 
+                estimates suggest $50–100 million. TRUE expanded in 2020 by acquiring Octane Fitness, 
                 a maker of ellipticals and home-cardio equipment.
               </p>
             </div>

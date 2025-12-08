@@ -1,28 +1,42 @@
 import React, { useState, useMemo, useEffect } from "react";
 import vendorData from "./data/vendorData.json";
-import whatIfButtonImg from "./assets/whatifbutton.jpeg";
-import CustomWeightsModal from "./CustomWeightsModal.jsx";
 
 // Scenario options with their corresponding score field
 const SCENARIO_OPTIONS = [
-  { id: "highestOverall", label: "Highest Equipment Overall Score", scoreField: "S12", allowedWithCustomWeights: true },
-  { id: "singleVendor", label: "Highest Vendor Overall Score", scoreField: "S12", allowedWithCustomWeights: true },
-  { id: "mostReliable", label: "Most Reliable", scoreField: "S01", allowedWithCustomWeights: false },
-  { id: "greatestEaseOfUse", label: "Greatest Ease of Use", scoreField: "S02", allowedWithCustomWeights: false },
-  { id: "lowestPrice", label: "Lowest Price", scoreField: "S04", allowedWithCustomWeights: false },
-  { id: "bestLooking", label: "Best Looking", scoreField: "S05", allowedWithCustomWeights: false },
-  { id: "bestBuildQuality", label: "Best Build Quality", scoreField: "S06", allowedWithCustomWeights: false },
-  { id: "mostDurable", label: "Most Durable", scoreField: "S07", allowedWithCustomWeights: false },
-  { id: "bestServiceParts", label: "Best Svc/Parts Availability", scoreField: "S08", allowedWithCustomWeights: false },
-  { id: "bestWarranty", label: "Best Warranty", scoreField: "S09", allowedWithCustomWeights: false },
-  { id: "smallestFootprint", label: "Smallest Footprint", scoreField: "S10", allowedWithCustomWeights: false },
-  { id: "custom", label: "Custom", scoreField: "S12", allowedWithCustomWeights: true },
+  { id: "highestOverall", label: "Highest Equipment Overall Score", scoreField: "S12" },
+  { id: "singleVendor", label: "Highest Vendor Overall Score", scoreField: "S12" },
+  { id: "mostReliable", label: "Most Reliable", scoreField: "S01" },
+  { id: "greatestEaseOfUse", label: "Greatest Ease of Use", scoreField: "S02" },
+  { id: "lowestPrice", label: "Lowest Price", scoreField: "S04" },
+  { id: "bestLooking", label: "Best Looking", scoreField: "S05" },
+  { id: "bestBuildQuality", label: "Best Build Quality", scoreField: "S06" },
+  { id: "mostDurable", label: "Most Durable", scoreField: "S07" },
+  { id: "bestServiceParts", label: "Best Svc/Parts Availability", scoreField: "S08" },
+  { id: "bestWarranty", label: "Best Warranty", scoreField: "S09" },
+  { id: "smallestFootprint", label: "Smallest Footprint", scoreField: "S10" },
+  { id: "custom", label: "Custom", scoreField: "S12" },
 ];
 
-// Score field labels for display (shorter versions for Table 2 header)
+// Default weights
+const DEFAULT_WEIGHTS = {
+  S01: 22,
+  S02: 18,
+  S03: 6,
+  S04: 12,
+  S05: 12,
+  S06: 8,
+  S07: 8,
+  S08: 8,
+  S09: 4,
+  S10: 1,
+  S11: 1,
+};
+
+// Score field labels for display
 const SCORE_LABELS = {
   S01: "Reliability",
   S02: "Ease of Use",
+  S03: "Stack/Step Up",
   S04: "Price",
   S05: "Aesthetics",
   S06: "Build Quality",
@@ -30,6 +44,7 @@ const SCORE_LABELS = {
   S08: "Svc/Parts Avail.",
   S09: "Warranty",
   S10: "Footprint",
+  S11: "Weight",
   S12: "Overall",
 };
 
@@ -83,6 +98,240 @@ const calculateCustomOverallScore = (product, weights) => {
   return weightedScore;
 };
 
+// Weights Box Component
+const WeightsBox = ({ 
+  customWeights, 
+  setCustomWeights, 
+  hasCustomWeights, 
+  onApplyCustom, 
+  onResetDefault 
+}) => {
+  const scoreKeys = ["S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11"];
+  
+  // Calculate custom weights sum
+  const customSum = useMemo(() => {
+    return scoreKeys.reduce((sum, key) => {
+      const val = parseInt(customWeights[key], 10);
+      return sum + (isNaN(val) ? 0 : val);
+    }, 0);
+  }, [customWeights]);
+
+  const isValidSum = customSum === 100;
+
+  // Handle custom weight input change
+  const handleCustomChange = (key, value) => {
+    // Allow empty string or numbers only
+    if (value === "" || /^\d*$/.test(value)) {
+      const numVal = value === "" ? "" : Math.min(100, parseInt(value, 10) || 0);
+      setCustomWeights(prev => ({ ...prev, [key]: numVal }));
+    }
+  };
+
+  // Handle Apply Custom click
+  const handleApplyClick = () => {
+    if (!isValidSum) {
+      alert(`Weights must total 100%. Current total: ${customSum}%`);
+      return;
+    }
+    onApplyCustom();
+  };
+
+  return (
+    <div
+      style={{
+        backgroundColor: "#BBBBBB",
+        border: "2px solid #000080",
+        borderRadius: "10px",
+        padding: "15px 20px",
+        marginBottom: "20px",
+        width: "fit-content"
+      }}
+    >
+      {/* Header Row - S01 to S12 */}
+      <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+        <div style={{ width: "130px" }}></div>
+        {scoreKeys.map(key => (
+          <div
+            key={key}
+            style={{
+              width: "60px",
+              textAlign: "center",
+              color: "#000080",
+              fontWeight: "400",
+              fontSize: "14px",
+              fontFamily: "Lexend, sans-serif",
+            }}
+          >
+            {key}
+          </div>
+        ))}
+        <div
+          style={{
+            width: "60px",
+            textAlign: "center",
+            color: "#000080",
+            fontWeight: "400",
+            fontSize: "14px",
+            fontFamily: "Lexend, sans-serif",
+          }}
+        >
+          S12
+        </div>
+        <div style={{ width: "120px" }}></div>
+      </div>
+
+      {/* Default Weights Row */}
+      <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+        <div
+          style={{
+            width: "100px",
+            backgroundColor: "white",
+            borderRadius: "20px",
+            padding: "8px 15px",
+            textAlign: "center",
+            color: "#007BFF",
+            fontWeight: "400",
+            fontSize: "14px",
+            fontFamily: "Lexend, sans-serif",
+          }}
+        >
+          Default Weight
+        </div>
+        {scoreKeys.map(key => (
+          <div
+            key={key}
+            style={{
+              width: "50px",
+              margin: "0 5px",
+              backgroundColor: "white",
+              borderRadius: "20px",
+              padding: "8px 0",
+              textAlign: "center",
+              color: hasCustomWeights ? "white" : "#000080",
+              fontWeight: "400",
+              fontSize: "14px",
+              fontFamily: "Lexend, sans-serif",
+            }}
+          >
+            {DEFAULT_WEIGHTS[key]}%
+          </div>
+        ))}
+        <div
+          style={{
+            width: "50px",
+            margin: "0 5px",
+            backgroundColor: "white",
+            borderRadius: "20px",
+            padding: "8px 0",
+            textAlign: "center",
+            color: hasCustomWeights ? "white" : "#000080",
+            fontWeight: "400",
+            fontSize: "14px",
+            fontFamily: "Lexend, sans-serif",
+          }}
+        >
+          100%
+        </div>
+        <button
+          onClick={onResetDefault}
+          style={{
+            width: "120px",
+            marginLeft: "10px",
+            backgroundColor: "#005abe",
+            color: "white",
+            borderRadius: "20px",
+            padding: "8px 15px",
+            border: "none",
+            cursor: "pointer",
+            fontWeight: "400",
+            fontSize: "14px",
+            fontFamily: "Lexend, sans-serif",
+          }}
+        >
+          Reset Default
+        </button>
+      </div>
+
+      {/* Custom Weights Row */}
+<div style={{ display: "flex", alignItems: "center" }}>
+  <div
+    style={{
+      width: "100px",
+      backgroundColor: "white",
+      borderRadius: "20px",
+      padding: "8px 15px",
+      textAlign: "center",
+      color: "#28A745",
+      fontWeight: 400,
+      fontSize: "14px",
+      fontFamily: "Lexend, sans-serif",
+    }}
+  >
+    Custom Weight
+  </div>
+  {scoreKeys.map(key => (
+    <input
+      key={key}
+      type="text"
+      value={customWeights[key]}
+      onChange={(e) => handleCustomChange(key, e.target.value)}
+      placeholder=""
+      style={{
+        width: "50px",
+        margin: "0 5px",
+        backgroundColor: "white",
+        borderRadius: "20px",
+        padding: "8px 0",
+        textAlign: "center",
+        color: "#000080",
+        fontWeight: 400,
+        fontSize: "14px",
+        fontFamily: "Lexend, sans-serif",
+        border: "none",
+        outline: "none",
+      }}
+    />
+  ))}
+  <div
+    style={{
+      width: "50px",
+      margin: "0 5px",
+      backgroundColor: customSum === 0 ? "white" : (isValidSum ? "#28A745" : "#DC3545"),
+      borderRadius: "20px",
+      padding: "8px 0",
+      textAlign: "center",
+      color: customSum === 0 ? "white" : "white",
+      fontWeight: 400,
+      fontSize: "14px",
+      fontFamily: "Lexend, sans-serif",
+      minHeight: "16px",
+    }}
+  >
+    {customSum === 0 ? "" : `${customSum}%`}
+  </div>
+  <button
+    onClick={handleApplyClick}
+    style={{
+      width: "120px",
+      marginLeft: "10px",
+      backgroundColor: "#28A745",
+      color: "white",
+      borderRadius: "20px",
+      padding: "8px 15px",
+      border: "none",
+      cursor: "pointer",
+      fontWeight: 400,
+      fontSize: "14px",
+      fontFamily: "Lexend, sans-serif",
+    }}
+  >
+    Apply Custom
+  </button>
+</div>
+    </div>
+  );
+};
+
 export default function Scenarios() {
   // State
   const [selectedScenario, setSelectedScenario] = useState("highestOverall");
@@ -90,20 +339,12 @@ export default function Scenarios() {
   const [selections, setSelections] = useState({}); // { equipmentId: vendorId }
   
   // Custom weights state
-  const [customWeights, setCustomWeights] = useState(null);
-  const [isWeightsModalOpen, setIsWeightsModalOpen] = useState(false);
+  const [customWeightsInput, setCustomWeightsInput] = useState({
+    S01: "", S02: "", S03: "", S04: "", S05: "", S06: "", S07: "", S08: "", S09: "", S10: "", S11: ""
+  });
+  const [appliedCustomWeights, setAppliedCustomWeights] = useState(null);
 
-  const hasCustomWeights = customWeights !== null;
-
-  // Reset to allowed scenario if custom weights are applied and current scenario is not allowed
-  useEffect(() => {
-    if (hasCustomWeights) {
-      const currentOption = SCENARIO_OPTIONS.find(s => s.id === selectedScenario);
-      if (currentOption && !currentOption.allowedWithCustomWeights) {
-        setSelectedScenario("highestOverall");
-      }
-    }
-  }, [hasCustomWeights, selectedScenario]);
+  const hasCustomWeights = appliedCustomWeights !== null;
 
   // Get default quantities from JSON
   const defaultQuantities = useMemo(() => {
@@ -125,8 +366,23 @@ export default function Scenarios() {
     return SCENARIO_OPTIONS.find((s) => s.id === selectedScenario) || SCENARIO_OPTIONS[0];
   }, [selectedScenario]);
 
-  // Calculate vendor overall scores (average of all equipment scores for each vendor)
-  const vendorOverallScores = useMemo(() => {
+  // Get the display score for a product based on scenario
+  const getDisplayScore = (product) => {
+    if (!product) return 0;
+    
+    const scoreField = currentScenario.scoreField;
+    
+    // For S12 (Overall Score), use custom weights if applied
+    if (scoreField === "S12" && hasCustomWeights) {
+      return calculateCustomOverallScore(product, appliedCustomWeights);
+    }
+    
+    // For all other scenarios, return the specific criterion score
+    return product[scoreField] || 0;
+  };
+
+  // Calculate vendor average scores based on current scenario
+  const vendorAverageScores = useMemo(() => {
     const scores = {};
     vendorData.vendors.forEach((vendor) => {
       let totalScore = 0;
@@ -136,17 +392,27 @@ export default function Scenarios() {
           (p) => p.equipmentid === equip.equipmentid && p.vendorid === vendor.vendorid
         );
         if (product) {
-          const score = hasCustomWeights 
-            ? calculateCustomOverallScore(product, customWeights)
-            : (product.overallScore || product.S12 || 0);
-          totalScore += score;
+          totalScore += getDisplayScore(product);
           count++;
         }
       });
       scores[vendor.vendorid] = count > 0 ? totalScore / 7 : 0; // Always divide by 7
     });
     return scores;
-  }, [customWeights, hasCustomWeights]);
+  }, [currentScenario, appliedCustomWeights, hasCustomWeights]);
+
+  // Find vendor with highest average score
+  const highestVendorId = useMemo(() => {
+    let maxScore = -1;
+    let maxVendorId = null;
+    Object.entries(vendorAverageScores).forEach(([vendorId, score]) => {
+      if (score > maxScore) {
+        maxScore = score;
+        maxVendorId = vendorId;
+      }
+    });
+    return maxVendorId;
+  }, [vendorAverageScores]);
 
   // Calculate which vendor wins for each equipment based on scenario
   const calculateSelections = useMemo(() => {
@@ -158,72 +424,28 @@ export default function Scenarios() {
     }
 
     if (selectedScenario === "singleVendor") {
-      // Find vendor with most highest scores
-      const vendorWins = {};
-      vendorData.vendors.forEach((v) => {
-        vendorWins[v.vendorid] = 0;
-      });
-
-      vendorData.equipment.forEach((equip) => {
-        const productsForEquip = vendorData.products.filter(
-          (p) => p.equipmentid === equip.equipmentid
-        );
-        if (productsForEquip.length === 0) return;
-
-        // Use custom weights if available
-        const getScore = (p) => hasCustomWeights 
-          ? calculateCustomOverallScore(p, customWeights)
-          : (p.S12 || 0);
-
-        const maxScore = Math.max(...productsForEquip.map(getScore));
-        const winner = productsForEquip.find((p) => Math.abs(getScore(p) - maxScore) < 0.001);
-        if (winner) {
-          vendorWins[winner.vendorid]++;
-        }
-      });
-
-      // Find vendor with most wins
-      let topVendor = null;
-      let maxWins = 0;
-      Object.entries(vendorWins).forEach(([vendorid, wins]) => {
-        if (wins > maxWins) {
-          maxWins = wins;
-          topVendor = vendorid;
-        }
-      });
-
-      // Select all equipment from that vendor
-      if (topVendor) {
+      // Select all equipment from the vendor with highest average score
+      if (highestVendorId) {
         vendorData.equipment.forEach((equip) => {
           const product = vendorData.products.find(
-            (p) => p.equipmentid === equip.equipmentid && p.vendorid === topVendor
+            (p) => p.equipmentid === equip.equipmentid && p.vendorid === highestVendorId
           );
           if (product) {
-            newSelections[equip.equipmentid] = topVendor;
+            newSelections[equip.equipmentid] = highestVendorId;
           }
         });
       }
     } else {
       // Standard scenario: select highest score for the relevant field
-      const scoreField = currentScenario.scoreField;
-
       vendorData.equipment.forEach((equip) => {
         const productsForEquip = vendorData.products.filter(
           (p) => p.equipmentid === equip.equipmentid
         );
         if (productsForEquip.length === 0) return;
 
-        // Use custom weights for S12 scenarios
-        const getScore = (p) => {
-          if (scoreField === "S12" && hasCustomWeights) {
-            return calculateCustomOverallScore(p, customWeights);
-          }
-          return p[scoreField] || 0;
-        };
-
-        const maxScore = Math.max(...productsForEquip.map(getScore));
+        const maxScore = Math.max(...productsForEquip.map(p => getDisplayScore(p)));
         const winner = productsForEquip.find(
-          (p) => Math.abs(getScore(p) - maxScore) < 0.001
+          (p) => Math.abs(getDisplayScore(p) - maxScore) < 0.001
         );
         if (winner) {
           newSelections[equip.equipmentid] = winner.vendorid;
@@ -232,7 +454,7 @@ export default function Scenarios() {
     }
 
     return newSelections;
-  }, [selectedScenario, currentScenario, customWeights, hasCustomWeights]);
+  }, [selectedScenario, currentScenario, appliedCustomWeights, hasCustomWeights, highestVendorId]);
 
   // Update selections when scenario changes
   useEffect(() => {
@@ -289,15 +511,6 @@ export default function Scenarios() {
     );
   };
 
-  // Get the display score for a product (uses custom weights if active)
-  const getDisplayScore = (product) => {
-    if (!product) return 0;
-    if (hasCustomWeights) {
-      return calculateCustomOverallScore(product, customWeights);
-    }
-    return product.overallScore || product.S12 || 0;
-  };
-
   // Calculate summary data
   const summaryData = useMemo(() => {
     const data = [];
@@ -313,14 +526,7 @@ export default function Scenarios() {
         const product = getProduct(equip.equipmentid, selectedVendorId);
         if (product) {
           const cost = qty * product.allInUnitPrice;
-          
-          // Use custom weights for score if active, otherwise use scenario score field
-          let score;
-          if (hasCustomWeights) {
-            score = calculateCustomOverallScore(product, customWeights);
-          } else {
-            score = product[currentScenario.scoreField] || product.S12 || 0;
-          }
+          const score = getDisplayScore(product);
 
           data.push({
             equipment: equip.name,
@@ -351,19 +557,25 @@ export default function Scenarios() {
     const avgScore = checkedCount > 0 ? totalScore / checkedCount : 0;
 
     return { rows: data, totalCost, avgScore, checkedCount };
-  }, [selections, quantities, currentScenario, customWeights, hasCustomWeights]);
+  }, [selections, quantities, currentScenario, appliedCustomWeights, hasCustomWeights]);
 
   const isCustomMode = selectedScenario === "custom";
 
   // Handle applying custom weights
-  const handleApplyWeights = (weights) => {
-    setCustomWeights(weights);
-    setIsWeightsModalOpen(false);
+  const handleApplyCustomWeights = () => {
+    const weights = {};
+    Object.keys(customWeightsInput).forEach(key => {
+      weights[key] = parseInt(customWeightsInput[key], 10) || 0;
+    });
+    setAppliedCustomWeights(weights);
   };
 
-  // Handle clearing custom weights
-  const handleClearWeights = () => {
-    setCustomWeights(null);
+  // Handle resetting to default weights
+  const handleResetDefault = () => {
+    setAppliedCustomWeights(null);
+    setCustomWeightsInput({
+      S01: "", S02: "", S03: "", S04: "", S05: "", S06: "", S07: "", S08: "", S09: "", S10: "", S11: ""
+    });
   };
 
   return (
@@ -374,84 +586,49 @@ export default function Scenarios() {
         minHeight: "100%",
       }}
     >
-      {/* Dropdown and What-If Button Row */}
-      <div className="mb-[30px] flex justify-between items-start">
-        {/* Dropdown on the left */}
+      {/* Custom Weights Applied Indicator */}
+      {hasCustomWeights && (
+        <div 
+          style={{ 
+            textAlign: "right", 
+            marginBottom: "15px",
+            fontFamily: "Lexend, sans-serif",
+            fontSize: "18px",
+            fontWeight: "700",
+            color: "#FF073A",
+          }}
+        >
+          Custom Weights Applied
+        </div>
+      )}
+
+      {/* Weights Box */}
+      <WeightsBox
+        customWeights={customWeightsInput}
+        setCustomWeights={setCustomWeightsInput}
+        hasCustomWeights={hasCustomWeights}
+        onApplyCustom={handleApplyCustomWeights}
+        onResetDefault={handleResetDefault}
+      />
+
+      {/* Dropdown */}
+      <div className="mb-[30px]">
         <select
           value={selectedScenario}
           onChange={handleScenarioChange}
-          className="w-[350px] px-[10px] py-[5px] text-[18px] font-bold rounded-lg focus:outline-none cursor-pointer"
+          className="w-[350px] px-[10px] py-[5px] mt-[20px] text-[18px] font-bold rounded-lg focus:outline-none cursor-pointer"
           style={{ 
             fontFamily: "Lexend, sans-serif",
             color: "#000000",
             border: "3px solid #000080",
           }}
         >
-          {SCENARIO_OPTIONS.map((option) => {
-            const isDisabled = hasCustomWeights && !option.allowedWithCustomWeights;
-            return (
-              <option 
-                key={option.id} 
-                value={option.id}
-                disabled={isDisabled}
-                style={{
-                  color: isDisabled ? "#BBBBBB" : "#000000",
-                }}
-              >
-                {option.label}
-              </option>
-            );
-          })}
+          {SCENARIO_OPTIONS.map((option) => (
+            <option key={option.id} value={option.id}>
+              {option.label}
+            </option>
+          ))}
         </select>
-
-        {/* What-If Button container with label */}
-        <div className="flex flex-col items-center">
-          {/* Custom Weights label - only shows when active */}
-          {hasCustomWeights && (
-            <span 
-              style={{ 
-                fontFamily: "Lexend, sans-serif", 
-                color: "#FF000D", 
-                fontSize: "16px",
-                fontWeight: "600",
-                marginBottom: "14px",
-              }}
-            >
-              Custom Weights
-            </span>
-          )}
-          
-          {/* What-If Button */}
-          <button
-            onClick={() => setIsWeightsModalOpen(true)}
-className={`
-  w-[300px] 
-  h-[42px] 
-  p-0 
-  m-0
-  rounded-[8px]
-  transition duration-150
-  hover:scale-[1.03]
-  active:scale-[0.98]
-  relative 
-  overflow-hidden
-  shadow-[0_0_25px_#FFC066]
-`}
-          >
-            <img 
-              src={whatIfButtonImg} 
-              alt="What If"
-              className="
-                -ml-[6px] 
-                -mt-[1px]
-                w-[300px] 
-                h-[42px]
-                object-cover 
-                block
-              "
-            />
-          </button>
-        </div>
       </div>
 
       {/* Selection Table */}
@@ -470,18 +647,18 @@ className={`
               </th>
               <th
                 className="p-[3px] text-center bg-gray-50"
-                style={{ borderBottom: "1px solid #BBBBBB", width: "70px", fontWeight: "400" }}
+                style={{ borderBottom: "1px solid #BBBBBB", width: "70px", fontWeight: 400 }}
               >
                 Quantity
               </th>
               {vendorData.vendors.map((vendor) => (
                 <th
                   key={vendor.vendorid}
-                  className="p-[3px] text-center bg-gray-50 font-medium"
+                  className="p-[3px] text-center bg-gray-50"
                   style={{
                     borderBottom: "1px solid #BBBBBB",
                     color: "#00A3A8",
-                    fontWeight: "400",
+                    fontWeight: 400,
                     width: "10px",
                   }}
                 >
@@ -495,11 +672,11 @@ className={`
               <tr key={equip.equipmentid}>
                 {/* Equipment Name */}
                 <td
-                  className="p-3 font-medium"
+                  className="p-[3px] font-medium"
                   style={{
                     borderBottom: "1px solid #BBBBBB",
                     color: "#88C828",
-                    fontWeight: "400",
+                    fontWeight: 400,
                     width: "130px",
                   }}
                 >
@@ -508,14 +685,14 @@ className={`
 
                 {/* Quantity Dropdown */}
                 <td
-                  className="p-3 text-center"
+                  className="p-[3px] text-center"
                   style={{ borderBottom: "1px solid #BBBBBB", width: "90px" }}
                 >
                   <select
                     value={quantities[equip.equipmentid] || 1}
                     onChange={(e) => handleQuantityChange(equip.equipmentid, e.target.value)}
                     disabled={!isCustomMode}
-                    className={`w-14 px-2 py-1 border rounded text-center ${
+                    className={`w-14 px-[2px] py-[1px] border rounded text-center ${
                       isCustomMode ? "cursor-pointer" : "cursor-not-allowed bg-gray-100"
                     }`}
                   >
@@ -532,7 +709,7 @@ className={`
                   return (
                     <td
                       key={vendor.vendorid}
-                      className="p-3"
+                      className="p-[7px]"
                       style={{ borderBottom: "1px solid #BBBBBB", width: "175px" }}
                     >
                       {product ? (
@@ -582,45 +759,123 @@ className={`
               </tr>
             ))}
 
-            {/* Vendor Overall Score Row */}
+            {/* Vendor Average Score Row */}
             <tr>
               <td
-                className="p-[8px]"
+                className="p-[10px] font-medium"
                 style={{
                   borderBottom: "1px solid #BBBBBB",
                   color: "#000000",
-                  fontWeight: "400",
-                  width: "145px",
+                  fontWeight: 500,
+                  width: "140px",
                 }}
               >
-                Vendor Overall Score
+                Vendor Average Score
               </td>
               <td
-                className="p-3 text-center"
+                className="p-[3px text-center"
                 style={{ borderBottom: "1px solid #BBBBBB", width: "90px" }}
               >
                 {/* Empty - no quantity for this row */}
               </td>
-              {vendorData.vendors.map((vendor) => (
-                <td
-                  key={vendor.vendorid}
-                  className="p-3 text-center"
-                  style={{ borderBottom: "1px solid #BBBBBB", width: "175px" }}
-                >
-                  <div className="text-sm text-gray-700 font-semibold">
-                    {vendorOverallScores[vendor.vendorid].toFixed(2)}
-                  </div>
-                </td>
-              ))}
+              {vendorData.vendors.map((vendor) => {
+                const isHighest = vendor.vendorid === highestVendorId;
+                return (
+                  <td
+                    key={vendor.vendorid}
+                    className="p-[3px]"
+                    style={{ borderBottom: "1px solid #BBBBBB", width: "175px" }}
+                  >
+                    <div className="flex items-center gap-[5px] justify-center">
+                      {/* Checkbox (display only) */}
+                      <div 
+                        style={{
+                          width: "14px",
+                          height: "14px",
+                          border: isHighest ? "2px solid #064f20" : "2px solid #999",
+                          borderRadius: "3px",
+                          backgroundColor: isHighest ? "#3fad5d" : "#fff",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {isHighest && (
+                          <span style={{ color: "#fff", fontSize: "10px", fontWeight: "bold" }}>✓</span>
+                        )}
+                      </div>
+                      <div className="text-sm text-gray-700 font-semibold">
+                        {vendorAverageScores[vendor.vendorid].toFixed(2)}
+                      </div>
+                    </div>
+                  </td>
+                );
+              })}
             </tr>
+            
+            {/* Total Vendor Cost Row */}
+<tr>
+  <td
+    className="p-[10px] font-medium"
+    style={{
+      borderBottom: "1px solid #BBBBBB",
+      color: "#FF073A",
+      fontWeight: 400,
+      width: "140px",
+    }}
+  >
+    Total Vendor Cost
+  </td>
+  <td
+    className="p-[3px] text-center"
+    style={{ borderBottom: "1px solid #BBBBBB", width: "90px" }}
+  >
+    {/* Empty - no quantity for this row */}
+  </td>
+  {vendorData.vendors.map((vendor) => {
+    // Calculate total cost for this vendor
+    let vendorTotalCost = 0;
+    vendorData.equipment.forEach((equip) => {
+      const product = getProduct(equip.equipmentid, vendor.vendorid);
+      if (product) {
+        const qty = quantities[equip.equipmentid] || 1;
+        
+        if (isCustomMode) {
+          // In custom mode, only include if ANY vendor is selected for this equipment
+          const hasAnySelection = selections[equip.equipmentid] !== undefined;
+          if (hasAnySelection) {
+            vendorTotalCost += qty * product.allInUnitPrice;
+          }
+        } else {
+          // In non-custom mode, include all equipment
+          vendorTotalCost += qty * product.allInUnitPrice;
+        }
+      }
+    });
+    
+    return (
+      <td
+        key={vendor.vendorid}
+        className="p-[3px]"
+        style={{ borderBottom: "1px solid #BBBBBB", width: "175px" }}
+      >
+        <div className="flex items-center justify-center">
+          <div className="text-sm font-semibold" style={{ color: "#FF073A" }}>
+            {formatPrice(vendorTotalCost)}
+          </div>
+        </div>
+      </td>
+    );
+  })}
+</tr>
+
           </tbody>
         </table>
       </div>
 
       {/* Table 1 Footnote */}
       <div className="mb-[40px] text-[10px] text-gray-600 italic" style={{ fontFamily: "Lexend, sans-serif" }}>
-        † Only Overall Scores (S12) are shown in the above table.  But selection of brand (green checkmarks)
-        is based on the scenario selected from the dropdown.
+        
       </div>
 
       {/* Summary Table */}
@@ -631,11 +886,11 @@ className={`
         }}
       >
         <div
-          className="flex flex-col gap-2 "
+          className="flex flex-col gap-[2px]"
           style={{ fontSize: "18px", fontFamily: "Lexend, sans-serif" }}
         >
           {/* Header Row */}
-          <div className="flex gap-[10px] mt-[20px] ml-[23px] mr-[23px] mb-[8px]">
+          <div className="flex gap-[10px] mt-[20px] ml-[20px] mr-[20px] mb-[2px]">
             <SummaryBox width={220} isHeader align="center" height={50}>Equipment</SummaryBox>
             <SummaryBox width={100} isHeader align="center" height={50}>
               <div className="flex flex-col items-center">
@@ -652,7 +907,7 @@ className={`
 
           {/* Data Rows */}
           {summaryData.rows.map((row) => (
-            <div key={row.equipment} className="flex gap-[10px] mt-[8px] ml-[23px] mr-[23px] mb-[2px]">
+            <div key={row.equipment} className="flex gap-[10px] mt-[8px] ml-[20px] mr-[20px] mb-[-4px]">
               <SummaryBox width={220}>{row.equipment}</SummaryBox>
               <SummaryBox width={100} align="center">
                 {row.hasSelection ? row.score.toFixed(2) : ""}
@@ -682,22 +937,7 @@ className={`
       <div className="mt-[8px] text-[10px] text-gray-600 italic" style={{ fontFamily: "Lexend, sans-serif" }}>
         * Costs are based on "All In Unit Costs" which include the base quoted price for the
         equipment plus an allocated amount for delivery, installation, and sales tax.<br />
-        †† In this table the Score shown is based on the scenario selected from the dropdown list.
       </div>
-
-      {/* Custom Weights Modal */}
-      {isWeightsModalOpen && (
-        <CustomWeightsModal
-          isOpen={isWeightsModalOpen}
-          onClose={() => setIsWeightsModalOpen(false)}
-          onApply={handleApplyWeights}
-          onReset={() => {
-            setCustomWeights(null);
-            setIsWeightsModalOpen(false);
-          }}
-          currentWeights={customWeights}
-        />
-      )}
     </div>
   );
 }
