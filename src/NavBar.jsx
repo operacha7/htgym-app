@@ -25,7 +25,7 @@ const NavBar = ({ activeSection, onChangeSection, onToggleSidebar }) => {
               key={label}
               onClick={() => {
                 if (label === "Equipment Comparison") {
-                  openEquipmentReport("E01", "Dual Pulley", apiKey);
+                  openEquipmentReport("E01", "Dual Pulley");
                 } else {
                   onChangeSection(label);
                 }
