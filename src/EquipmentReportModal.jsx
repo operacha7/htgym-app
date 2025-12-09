@@ -529,7 +529,7 @@ export function openEquipmentReport(equipmentId, equipmentName, apiKey) {
       const prompt = "You are a procurement analyst specializing in commercial gym equipment for a condominium fitness center (Highland Tower). Analyze the following " + equipmentName + " equipment options and provide a recommendation.\\n\\nCRITERIA WEIGHTS (Total 100%):\\n" + weightsInfo + "\\n\\nThe most heavily weighted criteria are Reliability (22%), Ease of Use (18%), Price (12%), and Aesthetics (12%). These are critical for a shared condo gym environment.\\n\\nEQUIPMENT OPTIONS WITH DETAILED DATA:\\n" + productDetails + "\\n\\nPlease provide:\\n1. Your top recommendation with a clear justification based on the scores AND the detailed commentary provided\\n2. A comparison highlighting key trade-offs between the top 2-3 options, referencing specific details from the commentary\\n3. Important considerations for a condo gym environment (durability for shared use, ease of maintenance, warranty coverage, service availability)\\n\\nKeep your response focused and actionable. Start with the recommended vendor name followed by a colon.";
 
       try {
-        const response = await fetch("/api/generate-report", {
+        const response = await fetch("/.netlify/functions/generate-report", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
