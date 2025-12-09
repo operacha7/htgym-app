@@ -25,7 +25,6 @@ const NavBar = ({ activeSection, onChangeSection, onToggleSidebar }) => {
               key={label}
               onClick={() => {
                 if (label === "Equipment Comparison") {
-                  const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY || '';
                   openEquipmentReport("E01", "Dual Pulley", apiKey);
                 } else {
                   onChangeSection(label);

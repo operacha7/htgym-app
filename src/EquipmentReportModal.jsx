@@ -476,15 +476,10 @@ export function openEquipmentReport(equipmentId, equipmentName, apiKey) {
       document.querySelector('#scores-table tbody').innerHTML = bodyHtml;
     }
 
-    // LLM Recommendation with enhanced data
+   // LLM Recommendation with enhanced data
     async function generateRecommendation() {
       const button = document.getElementById('generate-recommendation');
       const output = document.getElementById('recommendation-output');
-      
-      if (!API_KEY) {
-        output.innerHTML = '<p class="text-red-500">API key not configured. Please add VITE_ANTHROPIC_API_KEY to your .env file.</p>';
-        return;
-      }
 
       const equipmentName = EQUIPMENT_LIST.find(e => e.id === currentEquipmentId)?.name || 'Equipment';
 
@@ -534,28 +529,21 @@ export function openEquipmentReport(equipmentId, equipmentName, apiKey) {
       const prompt = "You are a procurement analyst specializing in commercial gym equipment for a condominium fitness center (Highland Tower). Analyze the following " + equipmentName + " equipment options and provide a recommendation.\\n\\nCRITERIA WEIGHTS (Total 100%):\\n" + weightsInfo + "\\n\\nThe most heavily weighted criteria are Reliability (22%), Ease of Use (18%), Price (12%), and Aesthetics (12%). These are critical for a shared condo gym environment.\\n\\nEQUIPMENT OPTIONS WITH DETAILED DATA:\\n" + productDetails + "\\n\\nPlease provide:\\n1. Your top recommendation with a clear justification based on the scores AND the detailed commentary provided\\n2. A comparison highlighting key trade-offs between the top 2-3 options, referencing specific details from the commentary\\n3. Important considerations for a condo gym environment (durability for shared use, ease of maintenance, warranty coverage, service availability)\\n\\nKeep your response focused and actionable. Start with the recommended vendor name followed by a colon.";
 
       try {
-        const response = await fetch("https://api.anthropic.com/v1/messages", {
+        const response = await fetch("/api/generate-report", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "x-api-key": API_KEY,
-            "anthropic-version": "2023-06-01",
-            "anthropic-dangerous-direct-browser-access": "true"
           },
-          body: JSON.stringify({
-            model: "claude-sonnet-4-20250514",
-            max_tokens: 1500,
-            messages: [{ role: "user", content: prompt }]
-          })
+          body: JSON.stringify({ prompt: prompt })
         });
 
         if (!response.ok) {
           const errorData = await response.json().catch(function() { return {}; });
-          throw new Error(errorData.error ? errorData.error.message : "API error: " + response.status);
+          throw new Error(errorData.error || "API error: " + response.status);
         }
 
         const data = await response.json();
-        const text = data.content && data.content[0] ? data.content[0].text : "No recommendation could be generated.";
+        const text = data.text || "No recommendation could be generated.";
 
         const vendorMatch = text.match(/^([^:]+):/);
         const recommendedVendorName = vendorMatch ? vendorMatch[1].trim() : null;
@@ -616,11 +604,10 @@ export function openEquipmentReport(equipmentId, equipmentName, apiKey) {
 export default function EquipmentReportModal({ equipmentId, equipmentName, isOpen, onClose }) {
   useEffect(() => {
     if (isOpen && equipmentId && equipmentName) {
-      const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY || '';
-      openEquipmentReport(equipmentId, equipmentName, apiKey);
-      onClose(); // Close immediately since we opened a new window
+      openEquipmentReport(equipmentId, equipmentName);
+      onClose();
     }
   }, [isOpen, equipmentId, equipmentName, onClose]);
 
-  return null; // This component doesn't render anything
+  return null;
 }
