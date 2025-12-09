@@ -188,7 +188,7 @@ export default function VendorBrandMatrix() {
                   {/* Labels - at bottom, right justified */}
                   <div className="absolute bottom-[10px] right-[10px] text-[11px] text-slate-500 font-lexend text-right">
                     <div className="leading-[1.8]">Brand:</div>
-                    <div className="leading-[1.8]">Quoted Unit Price:</div>
+                    <div className="leading-[1.8]">All In Unit Price:</div>
                     <div className="leading-[1.8]">Overall Score:</div>
                   </div>
                 </td>
