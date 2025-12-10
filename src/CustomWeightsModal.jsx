@@ -1,33 +1,10 @@
 import React, { useState, useMemo, useEffect } from "react";
+import { DEFAULT_WEIGHTS, SCORE_LABELS } from "./constants";
 
-// Default weights (must sum to 100)
-const DEFAULT_WEIGHTS = {
-  S01: 22,  // Reliability
-  S02: 18,  // Ease of Use
-  S03: 6,   // Stack/Step Up/Mobility
-  S04: 12,  // Price
-  S05: 12,  // Aesthetics
-  S06: 8,   // Build Quality
-  S07: 8,   // Durability
-  S08: 8,   // Svc/Parts Availability
-  S09: 4,   // Warranty
-  S10: 1,   // Footprint
-  S11: 1,   // Weight
-};
-
-const CRITERIA_LABELS = [
-  { id: "S01", name: "Reliability" },
-  { id: "S02", name: "Ease of Use" },
-  { id: "S03", name: "Stack/Step Up/Mobility" },
-  { id: "S04", name: "Price" },
-  { id: "S05", name: "Aesthetics" },
-  { id: "S06", name: "Build Quality" },
-  { id: "S07", name: "Durability" },
-  { id: "S08", name: "Svc/Parts Availability" },
-  { id: "S09", name: "Warranty" },
-  { id: "S10", name: "Footprint" },
-  { id: "S11", name: "Weight" },
-];
+// Build criteria labels array from constants
+const CRITERIA_LABELS = Object.entries(SCORE_LABELS)
+  .filter(([id]) => id !== "S12") // Exclude Overall Score
+  .map(([id, name]) => ({ id, name }));
 
 export default function CustomWeightsModal({ isOpen, onClose, onApply, onReset, currentWeights }) {
   // Initialize with current weights if they exist, otherwise use defaults
@@ -301,6 +278,3 @@ export default function CustomWeightsModal({ isOpen, onClose, onApply, onReset, 
     </div>
   );
 }
-
-// Export default weights for use elsewhere
-export { DEFAULT_WEIGHTS };

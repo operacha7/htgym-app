@@ -1,71 +1,18 @@
 import { useEffect } from "react";
 import vendorData from "./data/vendorData.json";
+import {
+  EQUIPMENT_LIST,
+  SCORE_LABELS,
+  S02B_LABELS,
+  CRITERIA_WEIGHTS,
+  VENDOR_COLORS,
+  getCriteriaLabels,
+} from "./constants";
 
-// S03 criteria mapping based on equipment (was S05)
-const S03_LABELS = {
-  "Dual Pulley": "Stack Score",
-  "Leg Ext/Curl": "Stack Score",
-  "Treadmill": "Step Up Score",
-  "Elliptical": "Step Up Score",
-  "Recumbent Bike": "Step Thru Score",
-  "Rower": "Accessibility Score",
-  "Bench": "Mobility Score",
-};
-
-// Criteria codes and their labels
-const getCriteriaLabels = (equipmentName) => ({
-  S01: "Reliability Score",
-  S02: "Ease of Use Score",
-  S03: S03_LABELS[equipmentName] || "S03 Score",
-  S04: "Price Score",
-  S05: "Aesthetics Score",
-  S06: "Build Quality Score",
-  S07: "Durability Score",
-  S08: "Svc/Parts Availability Score",
-  S09: "Warranty Score",
-  S10: "Footprint Score",
-  S11: "Weight Score",
-});
-
-// Criteria weights
-const CRITERIA_WEIGHTS = {
-  S01: 0.22,  // Reliability
-  S02: 0.18,  // Ease of Use
-  S03: 0.06,  // Stack/Step Up/Mobility
-  S04: 0.12,  // Price
-  S05: 0.12,  // Aesthetics
-  S06: 0.08,  // Build Quality
-  S07: 0.08,  // Durability
-  S08: 0.08,  // Svc/Parts Availability
-  S09: 0.04,  // Warranty
-  S10: 0.01,  // Footprint
-  S11: 0.01,  // Weight
-};
-
-// Vendor colors
-const VENDOR_COLORS = {
-  V01: "#059669",
-  V02: "#1d4ed8",
-  V03: "#dc2626",
-  V04: "#9333ea",
-  V05: "#f59e0b",
-};
-
-// Equipment list in order
-const EQUIPMENT_LIST = [
-  { id: "E01", name: "Dual Pulley" },
-  { id: "E02", name: "Leg Ext/Curl" },
-  { id: "E03", name: "Treadmill" },
-  { id: "E04", name: "Elliptical" },
-  { id: "E05", name: "Recumbent Bike" },
-  { id: "E06", name: "Rower" },
-  { id: "E07", name: "Bench" },
-];
-
-export function openEquipmentReport(equipmentId, equipmentName, apiKey) {
+export function openEquipmentReport(equipmentId, equipmentName) {
   const equipmentProducts = vendorData.products.filter((p) => p.equipmentid === equipmentId);
   const criteriaLabels = getCriteriaLabels(equipmentName);
-  const criteriaKeys = Object.keys(criteriaLabels);
+  const criteriaKeys = Object.keys(SCORE_LABELS).filter(key => key !== "S12");
   const sortedProducts = [...equipmentProducts].sort((a, b) => b.overallScore - a.overallScore);
   const highestScore = Math.max(...equipmentProducts.map((p) => p.overallScore));
   
@@ -79,8 +26,8 @@ export function openEquipmentReport(equipmentId, equipmentName, apiKey) {
       name: eq.name,
       products: sorted,
       criteriaLabels: labels,
-      criteriaKeys: Object.keys(labels),
-      highestScore: Math.max(...products.map((p) => p.overallScore))
+      criteriaKeys: Object.keys(SCORE_LABELS).filter(key => key !== "S12"),
+      highestScore: products.length > 0 ? Math.max(...products.map((p) => p.overallScore)) : 0
     };
   });
 
@@ -243,7 +190,6 @@ export function openEquipmentReport(equipmentId, equipmentName, apiKey) {
     let CRITERIA_LABELS = ${JSON.stringify(criteriaLabels)};
     const CRITERIA_WEIGHTS = ${JSON.stringify(CRITERIA_WEIGHTS)};
     const VENDOR_COLORS = ${JSON.stringify(VENDOR_COLORS)};
-    const API_KEY = "${apiKey || ''}";
 
     let visibleVendors = VENDOR_DATA.map(v => v.vendorid);
 
@@ -476,7 +422,7 @@ export function openEquipmentReport(equipmentId, equipmentName, apiKey) {
       document.querySelector('#scores-table tbody').innerHTML = bodyHtml;
     }
 
-   // LLM Recommendation with enhanced data
+    // LLM Recommendation with enhanced data
     async function generateRecommendation() {
       const button = document.getElementById('generate-recommendation');
       const output = document.getElementById('recommendation-output');
@@ -494,17 +440,17 @@ export function openEquipmentReport(equipmentId, equipmentName, apiKey) {
         
         // Gather all comments/specifications
         const comments = [];
-        if (p.C02) comments.push("Build Quality Notes: " + p.C02);
-        if (p.C03) comments.push("Weight/Specs: " + p.C03);
-        if (p.C04) comments.push("Stack/Feature Info: " + p.C04);
-        if (p.C05) comments.push("Additional Specs: " + p.C05);
+        if (p.C02) comments.push("Footprint: " + p.C02);
+        if (p.C03) comments.push("Weight: " + p.C03);
+        if (p.C04) comments.push("Build Quality Notes: " + p.C04);
+        if (p.C05) comments.push("Equipment-specific: " + p.C05);
         if (p.C06) comments.push("Warranty Details: " + p.C06);
         if (p.C07) comments.push("Durability Assessment: " + p.C07);
         if (p.C08) comments.push("Reliability Notes: " + p.C08);
         if (p.C09) comments.push("Ease of Use: " + p.C09);
         if (p.C10) comments.push("Service/Parts Availability: " + p.C10);
         if (p.C11) comments.push("Aesthetics: " + p.C11);
-        if (p.C14) comments.push("Additional Notes: " + p.C14);
+        if (p.C14) comments.push("Additional Specs: " + p.C14);
         if (p.C15) comments.push("Dimensions: " + p.C15);
         
         let details = "VENDOR: " + p.vendor + "\\n";
@@ -526,7 +472,7 @@ export function openEquipmentReport(equipmentId, equipmentName, apiKey) {
         return CRITERIA_LABELS[key] + ": " + (CRITERIA_WEIGHTS[key] * 100).toFixed(0) + "%"; 
       }).join(", ");
 
-      const prompt = "You are a procurement analyst specializing in commercial gym equipment for a condominium fitness center (Highland Tower). Analyze the following " + equipmentName + " equipment options and provide a recommendation.\\n\\nCRITERIA WEIGHTS (Total 100%):\\n" + weightsInfo + "\\n\\nThe most heavily weighted criteria are Reliability (22%), Ease of Use (18%), Price (12%), and Aesthetics (12%). These are critical for a shared condo gym environment.\\n\\nEQUIPMENT OPTIONS WITH DETAILED DATA:\\n" + productDetails + "\\n\\nPlease provide:\\n1. Your top recommendation with a clear justification based on the scores AND the detailed commentary provided\\n2. A comparison highlighting key trade-offs between the top 2-3 options, referencing specific details from the commentary\\n3. Important considerations for a condo gym environment (durability for shared use, ease of maintenance, warranty coverage, service availability)\\n\\nKeep your response focused and actionable. Start with the recommended vendor name followed by a colon.";
+      const prompt = "You are a procurement analyst specializing in commercial gym equipment for a condominium fitness center (Highland Tower). Analyze the following " + equipmentName + " equipment options and provide a recommendation.\\n\\nCRITERIA WEIGHTS (Total 100%):\\n" + weightsInfo + "\\n\\nThe most heavily weighted criteria are Reliability (14%), Ease of Use (14%), Vendor Quality (12%), Price (12%), and Aesthetics (12%). These are critical for a shared condo gym environment.\\n\\nEQUIPMENT OPTIONS WITH DETAILED DATA:\\n" + productDetails + "\\n\\nPlease provide:\\n1. Your top recommendation with a clear justification based on the scores AND the detailed commentary provided\\n2. A comparison highlighting key trade-offs between the top 2-3 options, referencing specific details from the commentary\\n3. Important considerations for a condo gym environment (durability for shared use, ease of maintenance, warranty coverage, service availability)\\n\\nKeep your response focused and actionable. Start with the recommended vendor name followed by a colon.";
 
       try {
         const response = await fetch("/.netlify/functions/generate-report", {

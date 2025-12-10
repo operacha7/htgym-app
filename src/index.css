@@ -40,6 +40,10 @@ body {
   font-weight: 600 !important;
 }
 
+.font-semibold {
+  font-weight: 550 !important;
+}
+
 .text-blue-600 {
   color: rgb(37, 99, 235) !important;
 }

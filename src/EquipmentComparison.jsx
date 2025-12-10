@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import vendorData from "./data/vendorData.json";
 import EquipmentReportModal from "./EquipmentReportModal";
+import { EQUIPMENT_LIST } from "./constants";
 
 export default function EquipmentComparison() {
   // Default to first equipment (Dual Pulley)
   const [selectedEquipment, setSelectedEquipment] = useState(
-    vendorData.equipment[0]?.equipmentid || "E01"
+    EQUIPMENT_LIST[0]?.id || "E01"
   );
 
   // Get the equipment name for display
-  const selectedEquipmentData = vendorData.equipment.find(
-    (e) => e.equipmentid === selectedEquipment
+  const selectedEquipmentData = EQUIPMENT_LIST.find(
+    (e) => e.id === selectedEquipment
   );
 
   return (
@@ -32,8 +33,8 @@ export default function EquipmentComparison() {
             border: "3px solid #000080",
           }}
         >
-          {vendorData.equipment.map((equip) => (
-            <option key={equip.equipmentid} value={equip.equipmentid}>
+          {EQUIPMENT_LIST.map((equip) => (
+            <option key={equip.id} value={equip.id}>
               {equip.name}
             </option>
           ))}

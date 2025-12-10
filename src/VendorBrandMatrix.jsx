@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import vendorData from "./data/vendorData.json";
 import EquipmentReportModal from "./EquipmentReportModal";
 import radarIcon from "./assets/radar2.png";
+import { EQUIPMENT_LIST } from "./constants";
 
 // Import all images dynamically
 const imageModules = import.meta.glob("./assets/E*V*-*.png", { eager: true });
@@ -27,7 +28,7 @@ const formatPrice = (price) => {
   }).format(price);
 };
 
-/// Replace the ReportIcon component with:
+// Report Icon component
 const ReportIcon = () => (
   <div
     style={{
@@ -35,7 +36,7 @@ const ReportIcon = () => (
       height: "15px",
       border: "3px solid #ffff00",
       borderRadius: "50%",
-      overflow: "hidden", // This clips the image to the circle
+      overflow: "hidden",
       boxShadow: "0 2px 3px rgba(0,0,0,0.2)",
     }}
   >
@@ -50,6 +51,7 @@ const ReportIcon = () => (
     />
   </div>
 );
+
 export default function VendorBrandMatrix() {
   // State for the report modal
   const [reportModal, setReportModal] = useState({
@@ -61,12 +63,14 @@ export default function VendorBrandMatrix() {
   // Get the highest score for each equipment to highlight
   const highestScores = useMemo(() => {
     const scores = {};
-    vendorData.equipment.forEach((equip) => {
+    EQUIPMENT_LIST.forEach((equip) => {
       const productsForEquip = vendorData.products.filter(
-        (p) => p.equipmentid === equip.equipmentid
+        (p) => p.equipmentid === equip.id
       );
-      const maxScore = Math.max(...productsForEquip.map((p) => p.overallScore));
-      scores[equip.equipmentid] = maxScore;
+      if (productsForEquip.length > 0) {
+        const maxScore = Math.max(...productsForEquip.map((p) => p.overallScore));
+        scores[equip.id] = maxScore;
+      }
     });
     return scores;
   }, []);
@@ -139,7 +143,7 @@ export default function VendorBrandMatrix() {
                     borderBottom: "1px dashed #bbbbbb",
                   }}
                 >
-                  <span className="font-lexend text-[14px] text-[#00A3A8]  cursor-pointer hover:text-[#007B7F]">
+                  <span className="font-lexend text-[14px] text-[#00A3A8] cursor-pointer hover:text-[#007B7F]">
                     {vendor.name}
                   </span>
                 </th>
@@ -149,8 +153,8 @@ export default function VendorBrandMatrix() {
 
           {/* Body - Equipment Rows */}
           <tbody>
-            {vendorData.equipment.map((equip) => (
-              <tr key={equip.equipmentid}>
+            {EQUIPMENT_LIST.map((equip) => (
+              <tr key={equip.id}>
                 {/* Equipment Name Cell */}
                 <td
                   className="p-[10px] relative"
@@ -170,7 +174,7 @@ export default function VendorBrandMatrix() {
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        openReport(equip.equipmentid, equip.name);
+                        openReport(equip.id, equip.name);
                       }}
                       className="ml-[20px]"
                       style={{
@@ -195,16 +199,11 @@ export default function VendorBrandMatrix() {
 
                 {/* Vendor Cells */}
                 {vendorData.vendors.map((vendor) => {
-                  const product = getProduct(
-                    equip.equipmentid,
-                    vendor.vendorid
-                  );
-                  const image = findImage(equip.equipmentid, vendor.vendorid);
+                  const product = getProduct(equip.id, vendor.vendorid);
+                  const image = findImage(equip.id, vendor.vendorid);
                   const isHighestScore =
                     product &&
-                    Math.abs(
-                      product.overallScore - highestScores[equip.equipmentid]
-                    ) < 0.001;
+                    Math.abs(product.overallScore - highestScores[equip.id]) < 0.001;
 
                   return (
                     <td
@@ -235,7 +234,7 @@ export default function VendorBrandMatrix() {
 
                           {/* Brand, Price, Score - at bottom */}
                           <div className="flex flex-col items-center">
-                            {/* Brand - all red */}
+                            {/* Brand */}
                             <span className="font-lexend text-[13px] font-bold text-[#ff8100] leading-[1.8]">
                               {product.brand}
                             </span>

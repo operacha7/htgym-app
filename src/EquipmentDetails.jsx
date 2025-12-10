@@ -1,5 +1,13 @@
 import React, { useState, useMemo } from "react";
 import vendorData from "./data/vendorData.json";
+import { 
+  EQUIPMENT_LIST, 
+  SCORE_LABELS, 
+  S02B_LABELS,
+  C_CODE_LABELS_COMMON, 
+  C05_LABELS, 
+  C14_LABELS 
+} from "./constants";
 
 // Import all images dynamically (same as VendorBrandMatrix)
 const imageModules = import.meta.glob("./assets/E*V*-*.png", { eager: true });
@@ -26,76 +34,23 @@ const formatPrice = (price) => {
   }).format(price);
 };
 
-// C-code mappings based on equipment
+// C-code label helper using constants
 const getCCodeLabel = (code, equipmentName) => {
-  const mappings = {
-    C02: "Footprint (sq in)",
-    C03: "Weight (lbs)",
-    C04: "Build Quality Commentary",
-    C05: {
-      "Dual Pulley": "Single Stack Weight (lbs)",
-      "Leg Ext/Curl": "Single Stack Weight (lbs)",
-      "Treadmill": "Step Up Height (in)",
-      "Elliptical": "Step Up Height (in)",
-      "Recumbent Bike": "Step Thru Access",
-      "Rower": "Accessibility",
-      "Bench": "Mobility",
-    },
-    C06: "Warranty Frame/Parts/Labor (years)",
-    C07: "Durability Commentary",
-    C08: "Reliability Commentary",
-    C09: "Ease of Use Commentary",
-    C10: "Svc/Parts Availability Commentary",
-    C11: "Aesthetics Commentary",
-    C14: {
-      "Dual Pulley": "Cable Ratio",
-      "Leg Ext/Curl": "Cable Ratio",
-      "Treadmill": "Max Capacity (lbs)",
-      "Elliptical": "Stride Length (in)",
-      "Recumbent Bike": "Max Capacity (lbs)",
-      "Rower": "Max Capacity (lbs)",
-      "Bench": "Max Capacity (lbs)",
-    },
-    C15: "Dimensions (inches)",
-  };
-
-  const mapping = mappings[code];
-  if (typeof mapping === "object") {
-    return `${code} - ${mapping[equipmentName] || code}`;
+  if (code === "C05") {
+    return `${code} - ${C05_LABELS[equipmentName] || "Equipment-specific"}`;
   }
-  return `${code} - ${mapping || code}`;
+  if (code === "C14") {
+    return `${code} - ${C14_LABELS[equipmentName] || "Equipment-specific"}`;
+  }
+  return `${code} - ${C_CODE_LABELS_COMMON[code] || code}`;
 };
 
-// S-code mappings based on equipment
+// S-code label helper using constants
 const getSCodeLabel = (code, equipmentName) => {
-  const mappings = {
-    S01: "Reliability Score",
-    S02: "Ease of Use Score",
-    S03: {
-      "Dual Pulley": "Stack Score",
-      "Leg Ext/Curl": "Stack Score",
-      "Treadmill": "Step Up Score",
-      "Elliptical": "Step Up Score",
-      "Recumbent Bike": "Step Thru Score",
-      "Rower": "Accessibility Score",
-      "Bench": "Mobility Score",
-    },
-    S04: "Price Score",
-    S05: "Aesthetics Score",
-    S06: "Build Quality Score",
-    S07: "Durability Score",
-    S08: "Svc/Parts Availability Score",
-    S09: "Warranty Score",
-    S10: "Footprint Score",
-    S11: "Weight Score",
-    S12: "Overall Score",
-  };
-
-  const mapping = mappings[code];
-  if (typeof mapping === "object") {
-    return `${code} - ${mapping[equipmentName] || code}`;
+  if (code === "S02b") {
+    return `S02b - ${S02B_LABELS[equipmentName] || "Equipment-specific Score"}`;
   }
-  return `${code} - ${mapping || code}`;
+  return `${code} - ${SCORE_LABELS[code] || code}`;
 };
 
 // Row component for consistent styling
@@ -201,13 +156,13 @@ const ScoreRow = ({ label, value }) => (
 export default function EquipmentDetails() {
   // State for dropdowns
   const [selectedEquipmentId, setSelectedEquipmentId] = useState(
-    vendorData.equipment[0]?.equipmentid || ""
+    EQUIPMENT_LIST[0]?.id || ""
   );
   const [selectedVendorId, setSelectedVendorId] = useState("");
 
   // Get selected equipment name
   const selectedEquipment = useMemo(() => {
-    return vendorData.equipment.find((e) => e.equipmentid === selectedEquipmentId);
+    return EQUIPMENT_LIST.find((e) => e.id === selectedEquipmentId);
   }, [selectedEquipmentId]);
 
   // Get available vendors/brands for selected equipment
@@ -278,8 +233,8 @@ export default function EquipmentDetails() {
             backgroundColor: "#FFFFFF",
           }}
         >
-          {vendorData.equipment.map((equip) => (
-            <option key={equip.equipmentid} value={equip.equipmentid}>
+          {EQUIPMENT_LIST.map((equip) => (
+            <option key={equip.id} value={equip.id}>
               {equip.name}
             </option>
           ))}
@@ -406,6 +361,10 @@ export default function EquipmentDetails() {
             <ScoreRow
               label={getSCodeLabel("S02", equipmentName)}
               value={selectedProduct.S02}
+            />
+            <ScoreRow
+              label={getSCodeLabel("S02b", equipmentName)}
+              value={selectedProduct.S02b}
             />
             <ScoreRow
               label={getSCodeLabel("S03", equipmentName)}

@@ -1,11 +1,15 @@
 import React from "react";
+import { EQUIPMENT_LIST, SCORE_LABELS, DEFAULT_WEIGHTS } from "./constants";
+
+// Import equipment images
 import dualPulleyImg from "./assets/E01V01-dual_pulley_life_fitness.png";
 import legExtImg from "./assets/E02V03-leg_ext_curl_matrix.png";
-import treadmillImg from "./assets/E03V04-treadmill_technogym.png";
-import ellipticalImg from "./assets/E04V03-elliptical_matrix.png";
-import bikeImg from "./assets/E05V05-recumbent_bike_top_fitness.png";
-import rowerImg from "./assets/E06V03-rower_concept2.png";
-import benchImg from "./assets/E07V04-bench_technogym.png";
+import chestPressImg from "./assets/E03V04-chest_press_technogym.png";
+import treadmillImg from "./assets/E04V04-treadmill_technogym.png";
+import ellipticalImg from "./assets/E05V03-elliptical_matrix.png";
+import bikeImg from "./assets/E06V05-recumbent_bike_true_fitness.png";
+import rowerImg from "./assets/E07V03-rower_concept2.png";
+import benchImg from "./assets/E08V04-bench_technogym.png";
 
 export default function Introduction() {
   // Column widths
@@ -17,16 +21,23 @@ export default function Introduction() {
   const GAP_COL1_COL2 = "gap-[100px]";
   const GAP_COL2_COL3 = "gap-[100px]";
 
-  // Images array for the column
-  const images = [
-    { src: dualPulleyImg, alt: "Dual Pulley", label: "Dual Pulley" },
-    { src: legExtImg, alt: "Leg Extension/Curl", label: "Leg Ext/Curl" },
-    { src: treadmillImg, alt: "Treadmill", label: "Treadmill" },
-    { src: ellipticalImg, alt: "Elliptical", label: "Elliptical" },
-    { src: bikeImg, alt: "Recumbent Bike", label: "Recumbent Bike" },
-    { src: rowerImg, alt: "Rower", label: "Rower" },
-    { src: benchImg, alt: "Bench", label: "Bench" },
-  ];
+  // Images array for the column - map to EQUIPMENT_LIST
+  const imageMap = {
+    "E01": dualPulleyImg,
+    "E02": legExtImg,
+    "E03": chestPressImg,
+    "E04": treadmillImg,
+    "E05": ellipticalImg,
+    "E06": bikeImg,
+    "E07": rowerImg,
+    "E08": benchImg,
+  };
+
+  const images = EQUIPMENT_LIST.map(equip => ({
+    src: imageMap[equip.id],
+    alt: equip.name,
+    label: equip.name,
+  }));
 
   // Vendors data
   const vendorsData = [
@@ -37,35 +48,28 @@ export default function Introduction() {
     { vendor: "Top Fitness", type: "Retailer", brand: "True Fitness" },
   ];
 
-  // Equipment data
-  const equipmentData = [
-    "Dual Pulley",
-    "Leg Extension/Curl",
-    "Treadmill",
-    "Elliptical",
-    "Recumbent Bike",
-    "Rower",
-    "Adjustable Bench",
-  ];
+  // Equipment data - from constants
+  const equipmentData = EQUIPMENT_LIST.map(equip => equip.name);
 
-  // Criteria data
+  // Criteria data - built from constants with visual groupings
   const criteriaData = [
-    { code: "S01", name: "Reliability", weight: "22%" },
-    { code: "S02", name: "Ease of Use", weight: "18%" },
-    { code: "S03", name: "Varies", weight: "6%" },
+    { code: "S01", name: SCORE_LABELS.S01, weight: `${DEFAULT_WEIGHTS.S01}%` },
+    { code: "S02", name: SCORE_LABELS.S02, weight: `${DEFAULT_WEIGHTS.S02}%` },
     { break: true },
-    { code: "S04", name: "Price", weight: "12%" },
-    { code: "S05", name: "Aesthetics", weight: "12%" },
-    { code: "S06", name: "Build Quality", weight: "8%" },
-    { code: "S07", name: "Durability", weight: "8%" },
+    { code: "S03", name: SCORE_LABELS.S03, weight: `${DEFAULT_WEIGHTS.S03}%` },
+    { code: "S04", name: SCORE_LABELS.S04, weight: `${DEFAULT_WEIGHTS.S04}%` },
+    { code: "S05", name: SCORE_LABELS.S05, weight: `${DEFAULT_WEIGHTS.S05}%` },
     { break: true },
-    { code: "S08", name: "Svc/Parts Availability", weight: "8%" },
-    { code: "S09", name: "Warranty", weight: "4%" },
+    { code: "S06", name: SCORE_LABELS.S06, weight: `${DEFAULT_WEIGHTS.S06}%` },
+    { code: "S07", name: SCORE_LABELS.S07, weight: `${DEFAULT_WEIGHTS.S07}%` },
     { break: true },
-    { code: "S10", name: "Footprint", weight: "1%" },
-    { code: "S11", name: "Weight", weight: "1%" },
+    { code: "S08", name: SCORE_LABELS.S08, weight: `${DEFAULT_WEIGHTS.S08}%` },
+    { code: "S09", name: SCORE_LABELS.S09, weight: `${DEFAULT_WEIGHTS.S09}%` },
     { break: true },
-    { code: "S12", name: "Overall Score", weight: "100%" },
+    { code: "S10", name: SCORE_LABELS.S10, weight: `${DEFAULT_WEIGHTS.S10}%` },
+    { code: "S11", name: SCORE_LABELS.S11, weight: `${DEFAULT_WEIGHTS.S11}%` },
+    { break: true },
+    { code: "S12", name: SCORE_LABELS.S12, weight: "100%" },
   ];
 
   return (
@@ -183,11 +187,6 @@ export default function Introduction() {
               <p className="mb-[20px]">
                 The overall score was calculated as a weighted average, with the weights assigned 
                 based on the importance of each criterion.
-              </p>
-              <p className="mb-[20px]">
-                The same eleven criteria were applied to all equipment, with the exception of one 
-                factor, labeled S03, which was related to ease of use and varied based on the 
-                specific equipment.
               </p>
               <p className="italic text-[16px]">
                 (Refer to the "Criteria" section for comprehensive details.)
