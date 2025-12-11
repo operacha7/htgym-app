@@ -12,6 +12,7 @@ import EquipmentComparison from "./EquipmentComparison.jsx";
 import EquipmentDetails from "./EquipmentDetails";
 import ExistingEquipment from "./ExistingEquipment";
 import PasscodeProtection from "./PasscodeProtection";
+import FloorPlan from "./FloorPlan";
 
 const HEADER_TOP = 30; // top margin for header
 const HEADER_HEIGHT = 72; // header bar height
@@ -35,10 +36,12 @@ function App() {
 
   const renderCenterContent = () => {
     switch (activeSection) {
-        case "Scenarios":
-          return <Scenarios />;
-        case "Introduction":
+      case "Introduction":
           return <Introduction />;
+      case "Scenarios":
+          return <Scenarios />;
+      case "Floor Plan":
+          return <FloorPlan />;
       case "Criteria":
         return <Criteria />;
       case "Vendor & Brand Overview":

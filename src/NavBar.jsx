@@ -4,6 +4,7 @@ import whatIfButtonImg from "./assets/whatifbutton.jpeg";
 const NAV_ITEMS = [
   'Introduction',
   'Scenarios',
+  'Floor Plan',
   'Criteria',
   'Vendor & Brand Overview',
   'Vendor & Brand Matrix',
@@ -13,11 +14,53 @@ const NAV_ITEMS = [
 ];
 
 const NavBar = ({ activeSection, onChangeSection, onToggleSidebar }) => {
+  // First 3 items are the main buttons
+  const mainItems = NAV_ITEMS.slice(0, 3);
+  const otherItems = NAV_ITEMS.slice(3);
+
   return (
     <div className="w-full flex flex-col items-center">
       {/* Navigation Buttons */}
       <nav className="flex flex-col items-center mt-[20px] gap-[15px]">
-        {NAV_ITEMS.map((label) => {
+        
+        {/* Main buttons with golden border */}
+        <div 
+          className="flex flex-col items-center gap-[15px] p-[15px] rounded-[12px]"
+          style={{ border: "3px solid #FFC857" }}
+        >
+          {mainItems.map((label) => {
+            const isActive = label === activeSection;
+
+            return (
+              <button
+                key={label}
+                onClick={() => onChangeSection(label)}
+                className={`
+                  font-lexend
+                  text-[16px]
+                  tracking-[0.16em]
+                  rounded-[8px]
+                  w-[300px]
+                  py-[10px]
+                  shadow-button-ht
+                  transition duration-150
+                  ${isActive ? 'bg-[#706A4C] text-white' : 'bg-[#ECE8E8] text-black'}
+                  hover:scale-[1.03]
+                  hover:shadow-lg
+                  active:scale-[0.98]
+                `}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Larger gap after main buttons */}
+        <div className="h-[20px]"></div>
+
+        {/* Other navigation buttons */}
+        {otherItems.map((label) => {
           const isActive = label === activeSection;
 
           return (
