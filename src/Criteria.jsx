@@ -134,7 +134,7 @@ export default function Criteria() {
             <div key={index} className={`flex ${GAP_COL1_COL2}`}>
               {/* Col 1: Code and Name */}
               <div className={`${COL1_WIDTH} flex-shrink-0 flex items-start justify-end`}>
-                <span className="font-lexend italic text-[#00bfde] text-[18px] leading-tight text-right">
+                <span className="font-lexend italic text-[#b300de] text-[18px] mt-[5px] leading-tight text-right">
                   {criteria.code} - {criteria.name}
                 </span>
               </div>

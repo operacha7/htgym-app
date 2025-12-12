@@ -84,7 +84,7 @@ export default function Introduction() {
           <div className={`flex ${GAP_COL1_COL2}`}>
             {/* Col 1: Heading */}
             <div className={`${COL1_WIDTH} flex-shrink-0 flex pt-[10px] justify-end`}>
-              <span className="font-lexend italic text-[#00bfde] text-[20px] leading-tight text-right">
+              <span className="font-lexend italic text-[#b300de] text-[18px] mt-[11px] leading-tight text-right">
                 Vendors & Brands
               </span>
             </div>
@@ -168,7 +168,7 @@ export default function Introduction() {
           <div className={`flex ${GAP_COL1_COL2} mt-[40px]`}>
             {/* Col 1: Heading */}
             <div className={`${COL1_WIDTH} flex-shrink-0 flex pt-[10px] justify-end`}>
-              <span className="font-lexend italic text-[#00bfde] text-[20px] leading-tight text-right">
+              <span className="font-lexend italic text-[#b300de] text-[18px] mt-[12px] leading-tight text-right">
                 Evaluation Criteria
               </span>
             </div>
@@ -229,7 +229,7 @@ export default function Introduction() {
           <div className={`flex ${GAP_COL1_COL2} mt-[40px]`}>
             {/* Col 1: Heading */}
             <div className={`${COL1_WIDTH} flex-shrink-0 flex pt-[10px] justify-end`}>
-              <span className="font-lexend italic text-[#00bfde] text-[20px] leading-tight text-right">
+              <span className="font-lexend italic text-[#b300de] text-[18px] mt-[12px] leading-tight text-right">
                 Scenarios
               </span>
             </div>

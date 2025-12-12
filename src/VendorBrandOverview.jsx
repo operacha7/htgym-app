@@ -27,7 +27,7 @@ export default function VendorBrandOverview() {
           {/* === Advanced Exercise === */}
           <div className={`flex ${GAP_COL1_COL2}`}>
             <div className={`${COL1_WIDTH} flex-shrink-0 flex items-start justify-end`}>
-              <span className="font-lexend italic text-[#00bfde] mt-[25px] text-[18px] leading-tight text-right">
+              <span className="font-lexend italic text-[#b300de] mt-[25px] text-[18px] leading-tight text-right">
                 Advanced Exercise
                 <br />
                 <span className="text-[14px] text-slate-500">(Dealer)</span>
@@ -51,7 +51,7 @@ export default function VendorBrandOverview() {
           {/* === Life Fitness === */}
           <div className={`flex ${GAP_COL1_COL2}`}>
             <div className={`${COL1_WIDTH} flex-shrink-0 flex items-start justify-end`}>
-              <span className="font-lexend italic text-[#00bfde] mt-[25px] text-[18px] leading-tight text-right">
+              <span className="font-lexend italic text-[#b300de] mt-[25px] text-[18px] leading-tight text-right">
                 Life Fitness
                 <br />
                 <span className="text-[14px] text-slate-500">(Manufacturer)</span>
@@ -78,7 +78,7 @@ export default function VendorBrandOverview() {
           {/* === Marathon Fitness === */}
           <div className={`flex ${GAP_COL1_COL2}`}>
             <div className={`${COL1_WIDTH} flex-shrink-0 flex items-start justify-end`}>
-              <span className="font-lexend italic text-[#00bfde] mt-[25px] text-[18px] leading-tight text-right">
+              <span className="font-lexend italic text-[#b300de] mt-[25px] text-[18px] leading-tight text-right">
                 Marathon Fitness
                 <br />
                 <span className="text-[14px] text-slate-500">(Dealer)</span>
@@ -101,7 +101,7 @@ export default function VendorBrandOverview() {
           {/* === Precor === */}
           <div className={`flex ${GAP_COL1_COL2}`}>
             <div className={`${COL1_WIDTH} flex-shrink-0 flex items-start justify-end`}>
-              <span className="font-lexend italic text-[#00bfde] mt-[25px] text-[18px] leading-tight text-right">
+              <span className="font-lexend italic text-[#b300de] mt-[25px] text-[18px] leading-tight text-right">
                 Precor
                 <br />
                 <span className="text-[14px] text-slate-500">(Manufacturer)</span>
@@ -126,7 +126,7 @@ export default function VendorBrandOverview() {
           {/* === The Risher Companies === */}
           <div className={`flex ${GAP_COL1_COL2}`}>
             <div className={`${COL1_WIDTH} flex-shrink-0 flex items-start justify-end`}>
-              <span className="font-lexend italic text-[#00bfde] mt-[25px] text-[18px] leading-tight text-right">
+              <span className="font-lexend italic text-[#b300de] mt-[25px] text-[18px] leading-tight text-right">
                 Risher Companies
                 <br />
                 <span className="text-[14px] text-slate-500">(Dealer)</span>
@@ -149,7 +149,7 @@ export default function VendorBrandOverview() {
           {/* === Matrix Fitness === */}
           <div className={`flex ${GAP_COL1_COL2}`}>
             <div className={`${COL1_WIDTH} flex-shrink-0 flex items-start justify-end`}>
-              <span className="font-lexend italic text-[#00bfde] mt-[25px] text-[18px] leading-tight text-right">
+              <span className="font-lexend italic text-[#b300de] mt-[25px] text-[18px] leading-tight text-right">
                 Matrix Fitness
                 <br />
                 <span className="text-[14px] text-slate-500">(Manufacturer)</span>
@@ -176,7 +176,7 @@ export default function VendorBrandOverview() {
           {/* === Technogym === */}
           <div className={`flex ${GAP_COL1_COL2}`}>
             <div className={`${COL1_WIDTH} flex-shrink-0 flex items-start justify-end`}>
-              <span className="font-lexend italic text-[#00bfde] mt-[25px] text-[18px] leading-tight text-right">
+              <span className="font-lexend italic text-[#b300de] mt-[25px] text-[18px] leading-tight text-right">
                 Technogym
                 <br />
                 <span className="text-[14px] text-slate-500">(Manufacturer – Direct)</span>
@@ -196,7 +196,7 @@ export default function VendorBrandOverview() {
           {/* === Top Fitness === */}
           <div className={`flex ${GAP_COL1_COL2}`}>
             <div className={`${COL1_WIDTH} flex-shrink-0 flex items-start justify-end`}>
-              <span className="font-lexend italic text-[#00bfde] mt-[25px] text-[18px] leading-tight text-right">
+              <span className="font-lexend italic text-[#b300de] mt-[25px] text-[18px] leading-tight text-right">
                 Top Fitness
                 <br />
                 <span className="text-[14px] text-slate-500">(Dealer)</span>
@@ -223,7 +223,7 @@ export default function VendorBrandOverview() {
           {/* === TRUE Fitness === */}
           <div className={`flex ${GAP_COL1_COL2}`}>
             <div className={`${COL1_WIDTH} flex-shrink-0 flex items-start justify-end`}>
-              <span className="font-lexend italic text-[#00bfde] mt-[25px] text-[18px] leading-tight text-right">
+              <span className="font-lexend italic text-[#b300de] mt-[25px] text-[18px] leading-tight text-right">
                 TRUE Fitness
                 <br />
                 <span className="text-[14px] text-slate-500">(Manufacturer)</span>

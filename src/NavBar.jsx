@@ -26,7 +26,7 @@ const NavBar = ({ activeSection, onChangeSection, onToggleSidebar }) => {
         {/* Main buttons with golden border */}
         <div 
           className="flex flex-col items-center gap-[15px] p-[15px] rounded-[12px]"
-          style={{ border: "3px solid #FFC857" }}
+          style={{ border: "3px solid #706A4C" }}
         >
           {mainItems.map((label) => {
             const isActive = label === activeSection;
@@ -44,7 +44,7 @@ const NavBar = ({ activeSection, onChangeSection, onToggleSidebar }) => {
                   py-[10px]
                   shadow-button-ht
                   transition duration-150
-                  ${isActive ? 'bg-[#706A4C] text-white' : 'bg-[#ECE8E8] text-black'}
+                  ${isActive ? 'bg-[#704c6a] text-[#ffffff]' : 'bg-[#ECE8E8] text-black'}
                   hover:scale-[1.03]
                   hover:shadow-lg
                   active:scale-[0.98]
@@ -82,7 +82,7 @@ const NavBar = ({ activeSection, onChangeSection, onToggleSidebar }) => {
                 py-[10px]
                 shadow-button-ht
                 transition duration-150
-                ${isActive ? 'bg-[#706A4C] text-white' : 'bg-[#ECE8E8] text-black'}
+                ${isActive ? 'bg-[#704c6a] text-[#ffffff]' : 'bg-[#ECE8E8] text-black'}
                 hover:scale-[1.03]
                 hover:shadow-lg
                 active:scale-[0.98]
