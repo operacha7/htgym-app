@@ -29,6 +29,7 @@ const PADDING = 60;
 // Button colors
 const BUTTON_COLORS = {
   add: "#01F85C",
+  addAll: "#00FF7F",
   remove: "#F8019D",
   rotate: "#DBF801",
   clearAll: "#F80109",
@@ -426,8 +427,9 @@ export default function FloorPlan() {
     const product = getProductInfo(selectedEquipmentType, selectedVendor);
     const dims = getEquipmentDimensions(selectedEquipmentType, selectedVendor);
     
+    const newId = `${selectedEquipmentType}-${selectedVendor}-${Date.now()}`;
     const newEquipment = {
-      id: `${selectedEquipmentType}-${selectedVendor}-${Date.now()}`,
+      id: newId,
       equipmentId: selectedEquipmentType,
       vendorId: selectedVendor,
       name: equipment?.name || "Equipment",
@@ -441,8 +443,114 @@ export default function FloorPlan() {
     };
     
     setPlacedEquipment(prev => [...prev, newEquipment]);
+    setSelectedEquipment(newId); // Auto-select the newly added equipment
     setSelectedVendor("");
     setSelectedEquipmentType("");
+  };
+
+  // Add all equipment for selected vendor with predefined layout
+  const handleAddAllEquipment = () => {
+    if (!selectedVendor) return;
+    
+    const newEquipmentList = [];
+    const timestamp = Date.now();
+    
+    // Helper to create equipment entry with rotation
+    const createEquipment = (equipmentId, name, x, y, rotation, index) => {
+      const product = getProductInfo(equipmentId, selectedVendor);
+      const dims = getEquipmentDimensions(equipmentId, selectedVendor);
+      
+      // Swap width/height for 90° or 270° rotations
+      const isVertical = rotation === 90 || rotation === 270;
+      const width = isVertical ? dims.height : dims.width;
+      const height = isVertical ? dims.width : dims.height;
+      
+      return {
+        id: `${equipmentId}-${selectedVendor}-${timestamp}-${index}`,
+        equipmentId,
+        vendorId: selectedVendor,
+        name,
+        brand: product?.brand || "",
+        vendor: product?.vendor || "",
+        x,
+        y,
+        width,
+        height,
+        rotation,
+      };
+    };
+    
+    // North wall positioning
+    // Cardio needs 270° rotation so console faces NORTH (up toward pool)
+    
+    const northWallY = PADDING + 25; // Moved down ~15px
+    const northWallStartX = PADDING + ROOM.nwNotchWidth + 55; // Moved right ~40px
+    
+    let xPos = northWallStartX;
+    const spacing = 12; // Increased spacing
+    
+    // Elliptical 1 - at 270° rotation, horizontal spacing = original dims.height
+    let dims = getEquipmentDimensions("E05", selectedVendor);
+    let rotatedWidth = dims.height;
+    newEquipmentList.push(createEquipment("E05", "Elliptical", xPos, northWallY, 270, 0));
+    xPos += rotatedWidth + spacing;
+    
+    // Elliptical 2
+    newEquipmentList.push(createEquipment("E05", "Elliptical", xPos, northWallY, 270, 1));
+    xPos += rotatedWidth + spacing;
+    
+    // Treadmill 1
+    dims = getEquipmentDimensions("E04", selectedVendor);
+    rotatedWidth = dims.height;
+    newEquipmentList.push(createEquipment("E04", "Treadmill", xPos, northWallY, 270, 2));
+    xPos += rotatedWidth + spacing;
+    
+    // Treadmill 2
+    newEquipmentList.push(createEquipment("E04", "Treadmill", xPos, northWallY, 270, 3));
+    xPos += rotatedWidth + spacing;
+    
+    // Rower
+    dims = getEquipmentDimensions("E07", selectedVendor);
+    rotatedWidth = dims.height;
+    newEquipmentList.push(createEquipment("E07", "Rower", xPos, northWallY, 270, 4));
+    xPos += rotatedWidth + spacing;
+    
+    // Recumbent Bike
+    dims = getEquipmentDimensions("E06", selectedVendor);
+    rotatedWidth = dims.height;
+    newEquipmentList.push(createEquipment("E06", "Recumbent Bike", xPos, northWallY, 270, 5));
+    
+    // Strength equipment - all at 180° rotation
+    // User can drag to exact positions
+    
+    // E02 (Leg Ext/Curl) - right side, upper area
+    const rightColumnX = PADDING + ROOM.nwNotchWidth + ROOM.northMainWidth - 150;
+    newEquipmentList.push(createEquipment("E02", "Leg Ext/Curl", 
+      rightColumnX, 
+      PADDING + 180, 
+      180, 6));
+    
+    // E08 (Bench) - center-left of main floor
+    newEquipmentList.push(createEquipment("E08", "Bench", 
+      PADDING + ROOM.nwNotchWidth + 50, 
+      PADDING + 280, 
+      180, 7));
+    
+    // E03 (Chest Press) - right side, middle (below E02)
+    newEquipmentList.push(createEquipment("E03", "Chest Press", 
+      rightColumnX, 
+      PADDING + 320, 
+      180, 8));
+    
+    // E01 (Dual Pulley) - center area
+    newEquipmentList.push(createEquipment("E01", "Dual Pulley", 
+      PADDING + ROOM.swAlcoveWidth + ROOM.southAlcoveWidth + 30, 
+      PADDING + ROOM.eastMainLength + 20, 
+      180, 9));
+    
+    setPlacedEquipment(prev => [...prev, ...newEquipmentList]);
+    setSelectedEquipment(null);
+    setSelectedVendor("");
   };
 
   // Remove selected equipment
@@ -629,6 +737,14 @@ export default function FloorPlan() {
             </option>
           ))}
         </select>
+
+        {/* Add All Button - right after vendor dropdown */}
+        <RoundButton
+          onClick={handleAddAllEquipment}
+          disabled={!selectedVendor}
+          color={BUTTON_COLORS.addAll}
+          label={<span>Add<br/>All</span>}
+        />
 
         {/* Equipment Dropdown */}
         <select
@@ -962,17 +1078,34 @@ export default function FloorPlan() {
               16' 2"
             </text>
 
-            {/* Door */}
+            {/* Door 1 - South wall of SW alcove (swings into room) */}
             <line 
               x1={PADDING + ROOM.swAlcoveWidth + 10} 
               y1={PADDING + ROOM.nwNotchDepth + ROOM.westMainLength + ROOM.swAlcoveDepth} 
               x2={PADDING + ROOM.swAlcoveWidth + 10} 
-              y2={PADDING + ROOM.nwNotchDepth + ROOM.westMainLength + ROOM.swAlcoveDepth - 36} 
+              y2={PADDING + ROOM.nwNotchDepth + ROOM.westMainLength + ROOM.swAlcoveDepth - 32} 
               stroke="#333" 
               strokeWidth="2" 
             />
             <path 
-              d={`M ${PADDING + ROOM.swAlcoveWidth + 10} ${PADDING + ROOM.nwNotchDepth + ROOM.westMainLength + ROOM.swAlcoveDepth - 36} A 36 36 0 0 0 ${PADDING + ROOM.swAlcoveWidth + 46} ${PADDING + ROOM.nwNotchDepth + ROOM.westMainLength + ROOM.swAlcoveDepth}`} 
+              d={`M ${PADDING + ROOM.swAlcoveWidth + 10} ${PADDING + ROOM.nwNotchDepth + ROOM.westMainLength + ROOM.swAlcoveDepth - 32} A 32 32 0 0 0 ${PADDING + ROOM.swAlcoveWidth + 42} ${PADDING + ROOM.nwNotchDepth + ROOM.westMainLength + ROOM.swAlcoveDepth}`} 
+              fill="none" 
+              stroke="#666" 
+              strokeWidth="1" 
+              strokeDasharray="3,3" 
+            />
+
+            {/* Door 2 - West wall, south side near SW corner (swings outward to west) */}
+            <line 
+              x1={PADDING} 
+              y1={PADDING + ROOM.nwNotchDepth + ROOM.westMainLength - 10} 
+              x2={PADDING - 32} 
+              y2={PADDING + ROOM.nwNotchDepth + ROOM.westMainLength - 10} 
+              stroke="#333" 
+              strokeWidth="2" 
+            />
+            <path 
+              d={`M ${PADDING - 32} ${PADDING + ROOM.nwNotchDepth + ROOM.westMainLength - 10} A 32 32 0 0 1 ${PADDING} ${PADDING + ROOM.nwNotchDepth + ROOM.westMainLength - 42}`} 
               fill="none" 
               stroke="#666" 
               strokeWidth="1" 
@@ -1062,8 +1195,9 @@ export default function FloorPlan() {
         style={{ fontFamily: "Lexend, sans-serif" }}
       >
         <p>
-          <strong>Tips:</strong> Select a vendor and equipment type, then click Add. 
-          Drag equipment to position. Click to select, then use Rotate or Remove buttons.
+          <strong>Tips:</strong> Select a vendor and click <strong>Add All</strong> to add all equipment in a suggested layout 
+          (cardio on North wall facing the pool, strength in main area). Or add equipment one at a time with the Add button.
+          Drag equipment to reposition. Click to select, then use Rotate or Remove buttons.
           Hover over equipment to see full name. Click Save to download as PNG image.
         </p>
       </div>
